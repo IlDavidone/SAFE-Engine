@@ -136,6 +136,12 @@ void createCubeGui() {
 		Cube cube(cubePositions->size(), 0.0f, cubePosition);
 		cubePositions->push_back(cube);
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete All")) {
+		for (int i{ 0 }; i < cubePositions->size(); i++) {
+			cubePositions->clear();
+		}
+	}
 	ImGui::Text("Total Cubes: %d", (int)cubePositions->size());
 	for (int i{ 0 }; i < cubePositions->size(); i++) {
 		ImGui::Text("Cube %i: %f, %f, %f", i, (*cubePositions)[i].position.x, (*cubePositions)[i].position.y, (*cubePositions)[i].position.z);
@@ -156,7 +162,51 @@ void sceneViewer() {
 	glfwGetWindowSize(window, &winWidth, &winHeight);
 	ImGui::SetWindowSize(ImVec2(winWidth / 4, winHeight / 1.5), ImGuiCond_Once);
 	ImGui::SetWindowPos(ImVec2((winWidth / 2) - (ImGui::GetWindowWidth() / 2), 5), ImGuiCond_Once);
-	ImGui::Text("Scene Viewer");
+
+	if (ImGui::TreeNode("Scene"))
+	{
+		if (ImGui::TreeNode("Lights")) {
+			const char* txt = "Main Light";
+			const char* btn = "Properties";
+
+			ImVec2 textSize = ImGui::CalcTextSize(txt);
+			float buttonHeight = ImGui::GetFrameHeight();
+			float textOffsetY = (buttonHeight - textSize.y) * 0.5f;
+
+			ImGui::Dummy(ImVec2(0.0f, 0.0f));
+			ImGui::SameLine();
+
+			ImVec2 cursor = ImGui::GetCursorPos();
+
+			ImGui::SetCursorPosY(cursor.y + textOffsetY);
+			ImGui::TextUnformatted(txt);
+
+			ImGui::SetCursorPosY(cursor.y);
+			ImGui::SameLine();
+
+			if (ImGui::Button(btn)) {
+				lightGuiOpen = !lightGuiOpen;
+			};
+
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Cubes"))
+		{
+			for (int i = 0; i < cubePositions->size(); i++)
+			{
+				ImGui::PushID(i);
+				ImGui::Text("Cube %d", i);
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Delete")) {
+					cubePositions->erase(cubePositions->begin() + i);
+					i--;
+				}
+				ImGui::PopID();
+			}
+			ImGui::TreePop();
+		}
+		ImGui::TreePop();
+	}
 	ImGui::End();
 }
 
