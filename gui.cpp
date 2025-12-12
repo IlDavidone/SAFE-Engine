@@ -3,6 +3,7 @@
 void infoBox();
 void lightParametersGui();
 void createCubeGui();
+void sceneViewer();
 
 bool lightGuiOpen = true;
 glm::vec3 cubePosition;
@@ -40,6 +41,7 @@ void showGui() {
 	ImGui::Text("ImGui Window size: %.1f", ImGui::GetWindowSize().x);
 	infoBox();
 	createCubeGui();
+	sceneViewer();
 
 	if (ImGui::BeginPopupModal("Exit", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar))
 	{
@@ -131,10 +133,30 @@ void createCubeGui() {
 	ImGui::SetWindowPos(ImVec2(10, 5), ImGuiCond_Always);
 	ImGui::SliderFloat3("Cube Position", (float*)&cubePosition, -20.0f, 20.0f);
 	if (ImGui::Button("Create Cube")) {
-		std::unique_ptr<Cube> cube = std::make_unique<Cube>(cubePositions.size(), 0.0f, cubePosition);
-		cubePositions.push_back(*cube);
+		Cube cube(cubePositions->size(), 0.0f, cubePosition);
+		cubePositions->push_back(cube);
 	}
-	ImGui::Text("Total Cubes: %d", (int)cubePositions.size());
+	ImGui::Text("Total Cubes: %d", (int)cubePositions->size());
+	for (int i{ 0 }; i < cubePositions->size(); i++) {
+		ImGui::Text("Cube %i: %f, %f, %f", i, (*cubePositions)[i].position.x, (*cubePositions)[i].position.y, (*cubePositions)[i].position.z);
+		ImGui::SameLine();
+		char label[32];
+		snprintf(label, sizeof(label), "Delete##%d", i);
+		if (ImGui::Button(label)) {
+			cubePositions->erase(cubePositions->begin() + i);
+			i--;
+		}
+	}
+	ImGui::End();
+}
+
+void sceneViewer() {
+	ImGui::Begin("Scene Viewer", NULL, ImGuiWindowFlags_NoCollapse);
+	int winWidth, winHeight;
+	glfwGetWindowSize(window, &winWidth, &winHeight);
+	ImGui::SetWindowSize(ImVec2(winWidth / 4, winHeight / 1.5), ImGuiCond_Once);
+	ImGui::SetWindowPos(ImVec2((winWidth / 2) - (ImGui::GetWindowWidth() / 2), 5), ImGuiCond_Once);
+	ImGui::Text("Scene Viewer");
 	ImGui::End();
 }
 

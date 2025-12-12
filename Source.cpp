@@ -134,8 +134,8 @@ int main() {
 
         int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
 
-        for (int i{ 0 }; i < cubePositions.size(); i++) {
-            cubePositions[i].draw(shaderProgram);
+        for (int i{ 0 }; i < cubePositions->size(); i++) {
+            (*cubePositions)[i].draw(shaderProgram);
         }
 
 		lightShader.Activate();

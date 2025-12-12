@@ -68,8 +68,7 @@ void Cube::rotateCube(float angle) {
 
 GLFWwindow* window = nullptr;
 
-std::vector<Cube> cubePositions {
-};
+std::unique_ptr<std::vector<Cube>> cubePositions (new std::vector<Cube>);
 
 int framePerSeconds{};
 

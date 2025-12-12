@@ -27,7 +27,7 @@ extern GLFWwindow* window;
 extern float vertices[];
 extern unsigned int verticesSize;
 
-extern std::vector<Cube> cubePositions;
+extern std::unique_ptr<std::vector<Cube>> cubePositions;
 
 extern int framePerSeconds;
 
