@@ -29,6 +29,8 @@ extern unsigned int verticesSize;
 
 extern std::unique_ptr<std::vector<Cube>> cubePositions;
 
+extern std::vector<glm::vec3> pointLightPositions;
+
 extern int framePerSeconds;
 
 extern glm::mat4 model;

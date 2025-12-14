@@ -26,6 +26,8 @@ void showGui() {
 	ImGui::SetWindowSize(ImVec2(winWidth / 4, winHeight / 4), ImGuiCond_Always);
 	ImGui::SetWindowPos(ImVec2(winWidth - ImGui::GetWindowSize().x - 10, 5), ImGuiCond_Always);
 
+	ImGui::Text("Test (To be replaced)");
+
 	ImGui::SliderFloat("Light Bulb Speed", &lightPosSpeed, -2.0f, 2.0f);
 	ImGui::Checkbox("Moving Light Bulb (Z-Axis)", &movingLightBulb);
 	ImGui::SliderFloat3("Light Bulb Position", (float*)&lightPos, -8.0f, 8.0f);
@@ -38,7 +40,7 @@ void showGui() {
 	}
 	ImGui::Separator();
 
-	ImGui::Checkbox("Demo Window", &showDemoWindow);
+	//ImGui::Checkbox("Demo Window", &showDemoWindow);
 	ImGui::Text("ImGui Window size: %.1f", ImGui::GetWindowSize().x);
 	infoBox();
 	createCubeGui();
@@ -71,12 +73,12 @@ void showGui() {
 void infoBox() {
 	ImGui::Begin("Info", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
-	ImVec2 textSize = ImGui::CalcTextSize("Application average 000.00000 ms/frame (0000.0 FPS) ");
+	ImVec2 textSize = ImGui::CalcTextSize("Application average 000.00000 ms/frame (0000000.0 FPS) ");
 	ImGui::SetWindowSize(ImVec2(textSize.x, textSize.y), ImGuiCond_Always);
 	int winWidth, winHeight;
 	glfwGetWindowSize(window, &winWidth, &winHeight);
 	ImGui::SetWindowPos(ImVec2(10, winHeight - ImGui::GetWindowHeight() - 10));
-	ImGui::Text("Application average %.5f ms/frame (%.1f FPS)", 1000.0f / framePerSeconds, 1000.0f / deltaTime);
+	ImGui::Text("Application average %.5f ms/frame (%.1f FPS)", 1000.0f * deltaTime, 1.0f / deltaTime);
 	ImGui::End();
 }
 
@@ -110,7 +112,7 @@ void lightParametersGui() {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		ImGui::SliderFloat("Light Bulb Speed", &lightPosSpeed, -2.0f, 2.0f);
 		ImGui::Checkbox("Moving Light Bulb (Z-Axis)", &movingLightBulb);
-		ImGui::SliderFloat3("Light Bulb Position", (float*)&lightPos, -8.0f, 8.0f);
+		ImGui::SliderFloat3("Light Bulb Position", (float*)&lightPos, -16.0f, 16.0f);
 	}
 
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -144,12 +146,16 @@ void createCubeGui() {
 		}
 	}
 	ImGui::Text("Total Cubes: %d", (int)cubePositions->size());
+	ImGui::Text("Position's Heap Memory Address: 0x%x", &cubePositions);
+
+	ImGui::Separator();
+
 	for (int i{ 0 }; i < cubePositions->size(); i++) {
 		ImGui::Text("Cube %i: %f, %f, %f", i, (*cubePositions)[i].position.x, (*cubePositions)[i].position.y, (*cubePositions)[i].position.z);
 		ImGui::SameLine();
 		char label[32];
 		snprintf(label, sizeof(label), "Delete##%d", i);
-		if (ImGui::Button(label)) {
+		if (ImGui::SmallButton(label)) {
 			cubePositions->erase(cubePositions->begin() + i);
 			i--;
 		}
@@ -164,30 +170,27 @@ void sceneViewer() {
 	int winWidth, winHeight;
 	glfwGetWindowSize(window, &winWidth, &winHeight);
 	ImGui::SetWindowSize(ImVec2(winWidth / 4, winHeight / 1.5), ImGuiCond_Once);
-	ImGui::SetWindowPos(ImVec2((winWidth / 2) - (ImGui::GetWindowWidth() / 2), 5), ImGuiCond_Once);
 
 	if (ImGui::TreeNode("Scene"))
 	{
+		if (ImGui::TreeNode("Cameras")) {
+			ImGui::TextUnformatted("Main Camera");
+
+			ImGui::SameLine();
+
+			if (ImGui::SmallButton("Properties")) {
+				
+			};
+
+			ImGui::TreePop();
+		}
+
 		if (ImGui::TreeNode("Lights")) {
-			const char* txt = "Main Light";
-			const char* btn = "Properties";
+			ImGui::TextUnformatted("Main Light");
 
-			ImVec2 textSize = ImGui::CalcTextSize(txt);
-			float buttonHeight = ImGui::GetFrameHeight();
-			float textOffsetY = (buttonHeight - textSize.y) * 0.5f;
-
-			ImGui::Dummy(ImVec2(0.0f, 0.0f));
 			ImGui::SameLine();
 
-			ImVec2 cursor = ImGui::GetCursorPos();
-
-			ImGui::SetCursorPosY(cursor.y + textOffsetY);
-			ImGui::TextUnformatted(txt);
-
-			ImGui::SetCursorPosY(cursor.y);
-			ImGui::SameLine();
-
-			if (ImGui::Button(btn)) {
+			if (ImGui::SmallButton("Properties")) {
 				lightGuiOpen = !lightGuiOpen;
 			};
 

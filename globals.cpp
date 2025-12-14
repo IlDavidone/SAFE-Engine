@@ -70,6 +70,13 @@ GLFWwindow* window = nullptr;
 
 std::unique_ptr<std::vector<Cube>> cubePositions (new std::vector<Cube>);
 
+std::vector<glm::vec3> pointLightPositions {
+        glm::vec3(0.7f,  0.2f,  2.0f),
+        glm::vec3(2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3(0.0f,  0.0f, -3.0f)
+};
+
 int framePerSeconds{};
 
 glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));

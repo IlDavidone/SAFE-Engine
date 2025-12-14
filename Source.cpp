@@ -29,7 +29,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(pixel::width, pixel::height, "Tave Engine", NULL, NULL);
+    window = glfwCreateWindow(pixel::width, pixel::height, "GL Engine (0_0_01)", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -37,6 +37,8 @@ int main() {
         return -1;
     }
     glfwMakeContextCurrent(window);
+
+    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -121,7 +123,51 @@ int main() {
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "material.specular"), lightProps.specular.x, lightProps.specular.y, lightProps.specular.z);
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "material.shininess"), lightProps.shininess);
         texture.Bind();
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+        //directional light
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+
+        //point lights
+        for (int i{ 0 }; i < pointLightPositions.size(); i++) {
+            std::string uniformPositionName =
+                "pointLights[" + std::to_string(i) + "].position";
+            std::string uniformAmbientName =
+                "pointLights[" + std::to_string(i) + "].ambient";
+            std::string uniformDiffuseName =
+                "pointLights[" + std::to_string(i) + "].diffuse";
+            std::string uniformSpecularName =
+                "pointLights[" + std::to_string(i) + "].specular";
+            std::string uniformConstantName =
+                "pointLights[" + std::to_string(i) + "].constant";
+            std::string uniformLinearName =
+                "pointLights[" + std::to_string(i) + "].linear";
+            std::string uniformQuadraticName =
+                "pointLights[" + std::to_string(i) + "].quadratic";
+
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformPositionName.c_str()), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformAmbientName.c_str()), lightProps.ambient.x, lightProps.ambient.y, lightProps.ambient.z);
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformDiffuseName.c_str()), lightProps.diffuse.x, lightProps.diffuse.y, lightProps.diffuse.z);
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformSpecularName.c_str()), lightProps.specular.x, lightProps.specular.y, lightProps.specular.z);
+            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformConstantName.c_str()), 1.0f);
+            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformLinearName.c_str()), 0.09f);
+            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformQuadraticName.c_str()), 0.032f);
+        }
+
+        //spot light
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.constant"), 1.0f);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.linear"), 0.09f);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.quadratic"), 0.032f);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
 
@@ -154,13 +200,16 @@ int main() {
 
         modelLoc = glGetUniformLocation(lightShader.ID, "model");
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
         lightVAO.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, pointLightPositions[i]);
+            model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         if (movingLightBulb) {
             lightPos.z -= lightPosSpeed * deltaTime;
@@ -221,19 +270,32 @@ void processInput(GLFWwindow* window)
 
 		Sleep(300); // Simple debouncing
     }
-    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
+
+    static bool cursorDisabled = true;
+    static bool tabWasDown = false;
+
+    bool tabDown = glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS;
+
+    if (tabDown && !tabWasDown)
+    {
+        cursorDisabled = !cursorDisabled;
+
         ImGuiIO& io = ImGui::GetIO();
-        if (!io.WantCaptureMouse) {
-            bool disabled = (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED);
-            if (disabled)
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            else {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                firstMouse = true; // reset so first movement doesn't jump
-            }
+
+        if (cursorDisabled)
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+            firstMouse = true;
         }
-        Sleep(300);
+        else
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+        }
     }
+
+    tabWasDown = tabDown;
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
