@@ -188,6 +188,8 @@
   <ItemGroup>
     <Text Include="glsl\blendingFragment.txt" />
     <Text Include="glsl\fragments.txt" />
+    <Text Include="glsl\instancedFragment.txt" />
+    <Text Include="glsl\instancedVertex.txt" />
     <Text Include="glsl\lightFragment.txt" />
     <Text Include="glsl\postprocessFragment.txt" />
     <Text Include="glsl\postprocessVertex.txt" />

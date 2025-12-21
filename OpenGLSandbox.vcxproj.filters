@@ -138,6 +138,8 @@
     <Text Include="glsl\postprocessFragment.txt" />
     <Text Include="glsl\skyboxVertex.txt" />
     <Text Include="glsl\skyboxFragment.txt" />
+    <Text Include="glsl\instancedVertex.txt" />
+    <Text Include="glsl\instancedFragment.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\Image.png">

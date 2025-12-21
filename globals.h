@@ -60,12 +60,12 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Textures> textures;
+	unsigned int VAO, VBO, EBO;
 
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Textures> textures);
 	void Draw(Shader& shader);
 private:
 	//  render data
-	unsigned int VAO, VBO, EBO;
 
 	void setupMesh();
 };
@@ -78,10 +78,10 @@ public:
 		loadModel(path);
 	}
 	void Draw(Shader& shader);
+	std::vector<Mesh> meshes;
+	std::vector<Textures> textures_loaded;
 private:
 	// model data
-	std::vector<Textures> textures_loaded;
-	std::vector<Mesh> meshes;
 	std::string directory;
 
 	void loadModel(std::string const& path);
