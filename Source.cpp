@@ -251,6 +251,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -476,7 +477,7 @@ int main() {
             glm::mat4 grassmodel = glm::mat4(1.0f);
             grassmodel = glm::translate(grassmodel, it->second);
             grassmodel = glm::rotate(grassmodel, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(grassmodel, glm::vec3(3.0f));
+            grassmodel = glm::scale(grassmodel, glm::vec3(1.2f));
             glUniformMatrix4fv(glGetUniformLocation(blendShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(grassmodel));
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }

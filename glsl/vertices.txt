@@ -4,10 +4,12 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
 
-out vec4 vertexColor;
-out vec2 texCoord;
-out vec3 FragPos;  
-out vec3 Normal;
+out VS_OUT {
+	vec4 vertexColor;
+	vec2 texCoord;
+	vec3 FragPos;  
+	vec3 Normal;
+} vs_out;
 
 uniform vec3 offset;
 
@@ -17,9 +19,9 @@ uniform mat4 projection;
 
 void main()
 {
-	FragPos = vec3(model * vec4(aPos, 1.0));
-	vertexColor = gl_Position;
-	Normal = mat3(transpose(inverse(model))) * aNormal; 
-	texCoord = aTexCoord;
+	vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
+	vs_out.vertexColor = gl_Position;
+	vs_out.Normal = mat3(transpose(inverse(model))) * aNormal; 
+	vs_out.texCoord = aTexCoord;
 	gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
