@@ -1,5 +1,14 @@
 #include "includes.h"
 
+struct Selectable {
+    glm::vec3 position;
+    float radius;
+    int id;
+};
+
+std::vector<Selectable> selectables;
+int selectedID = -1;
+
 unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
@@ -104,6 +113,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     window = glfwCreateWindow(pixel::width, pixel::height, "Left Engine A_0.0.02", NULL, NULL);
     if (window == NULL)
@@ -305,13 +315,17 @@ int main() {
     unsigned int diffuseMap = diffuseTexture.ID;
     unsigned int specularMap = specularTexture.ID;  
 
+    selectables.push_back({ glm::vec3(0.0f, 0.0f, 0.0f), 2.0f, 0 }); // myModel
+    selectables.push_back({ glm::vec3(3.0f, 0.0f, 0.0f), 2.0f, 1 }); // rei
+    selectables.push_back({ glm::vec3(6.0f, 0.0f, 0.0f), 2.0f, 2 }); // rock
+
+    glEnable(GL_MULTISAMPLE);
 
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -437,15 +451,27 @@ int main() {
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        if (selectedID == 0)
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 0.3f, 0.3f);
+        else
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         myModel.Draw(shaderProgram);
 
         model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        if (selectedID == 1)
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 0.3f, 0.3f);
+        else
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rei.Draw(shaderProgram);
 
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        if (selectedID == 2)
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 0.3f, 0.3f);
+        else
+            glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rock.Draw(shaderProgram);
 
         asteroidShader.Activate();
@@ -474,6 +500,8 @@ int main() {
         }
 
         shaderProgram.Activate();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuseTexture.ID);
         for (int i{ 0 }; i < cubePositions->size(); i++) {
             (*cubePositions)[i].draw(shaderProgram, VAO1);
         }
@@ -619,6 +647,38 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+glm::vec3 GetMouseRay(double mouseX, double mouseY,
+    const glm::mat4& projection,
+    const glm::mat4& view)
+{
+    float x = (2.0f * mouseX) / pixel::width - 1.0f;
+    float y = 1.0f - (2.0f * mouseY) / pixel::height;
+
+    glm::vec4 rayClip(x, y, -1.0f, 1.0f);
+    glm::vec4 rayEye = glm::inverse(projection) * rayClip;
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+    return glm::normalize(glm::vec3(glm::inverse(view) * rayEye));
+}
+
+bool RaySphere(const glm::vec3& ro,
+    const glm::vec3& rd,
+    const glm::vec3& center,
+    float radius,
+    float& t)
+{
+    glm::vec3 oc = ro - center;
+    float b = glm::dot(oc, rd);
+    float c = glm::dot(oc, oc) - radius * radius;
+    float h = b * b - c;
+
+    if (h < 0.0f) return false;
+
+    h = sqrt(h);
+    t = -b - h;
+    return t > 0.0f;
+}
+
 uint8_t wireframeCounter {0};
 uint8_t mouseCounter{0};
 
@@ -672,6 +732,8 @@ void processInput(GLFWwindow* window)
     tabWasDown = tabDown;
 }
 
+static bool mousePressedLastFrame = false;
+
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
     ImGui_ImplGlfw_CursorPosCallback(window, xposIn, yposIn);
@@ -679,6 +741,44 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     ImGuiIO& io = ImGui::GetIO();
     if (io.WantCaptureMouse)
         return;
+
+    bool mousePressedThisFrame = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+    // Only trigger on the edge: newly pressed this frame
+    if (mousePressedThisFrame && !mousePressedLastFrame)
+    {
+        double mx, my;
+        glfwGetCursorPos(window, &mx, &my);
+
+        glm::mat4 projection = glm::perspective(
+            glm::radians(camera.Zoom),
+            (float)pixel::width / pixel::height,
+            0.1f,
+            500.0f
+        );
+
+        glm::vec3 rayDir = GetMouseRay(mx, my, projection, camera.GetViewMatrix());
+        glm::vec3 rayOrigin = camera.Position;
+
+        float closest = FLT_MAX;
+        selectedID = -1;
+
+        for (auto& obj : selectables)
+        {
+            float t;
+            if (RaySphere(rayOrigin, rayDir, obj.position, obj.radius, t))
+            {
+                if (t < closest)
+                {
+                    closest = t;
+                    selectedID = obj.id;
+                }
+            }
+        }
+    }
+
+    // Update last-frame state
+    mousePressedLastFrame = mousePressedThisFrame;
 
     // Only process camera movement when the cursor is disabled (camera mode).
     if (glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
@@ -699,6 +799,8 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
     lastX = xpos;
     lastY = ypos;
+
+    std::cout << lastX << " " << lastY << std::endl;
 
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
