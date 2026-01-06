@@ -1,12 +1,6 @@
-#ifndef SHADER_CLASS_H
-#define SHADER_CLASS_H //start of pragma once directive
+#pragma once
 
-#include <glad/glad.h>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <cerrno>
+#include "includes.h"
 
 class Shader
 {
@@ -15,10 +9,14 @@ public:
 
 	Shader(const char* vertexPath, const char* fragmentPath);
 
+	void setColorUniform();
+	void setDirectionalLightUniforms();
+	void setPointLightUniforms();
+	void setSpotlightUniforms(Camera& camera);
+	void setMaterialUniforms();
 	void Activate();
 	void Delete();
 };
 
 std::string getFileContents(const char* filePath);
 
-#endif //end of pragma once directive
