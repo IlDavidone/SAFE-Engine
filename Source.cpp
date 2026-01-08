@@ -1,4 +1,4 @@
-#include "includes.h"
+#include "Includes.h"
 
 struct Selectable {
     glm::vec3 position;
@@ -363,8 +363,7 @@ int main() {
         glDepthMask(GL_TRUE);
 
         shaderProgram.Activate();
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightColor"), 1.0f, 1.0f, 1.0f);
+        shaderProgram.setColorUniform();
 
         glActiveTexture(GL_TEXTURE0);
         texture.Bind();
@@ -387,53 +386,12 @@ int main() {
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "material.shininess"), lightProps.shininess);
 
         //directional light
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.diffuse"), 0.8f, 0.8f, 0.8f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+        shaderProgram.setDirectionalLightUniforms();
 
-        //point lights
-        #define MAX_POINT_LIGHTS 1024
-
-        int lightCount = std::min((int)pointLightPositions.size(), MAX_POINT_LIGHTS);
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "nrPointLights"), lightCount);
-
-        for (int i{ 0 }; i < pointLightPositions.size(); i++) {
-            std::string uniformPositionName =
-                "pointLights[" + std::to_string(i) + "].position";
-            std::string uniformAmbientName =
-                "pointLights[" + std::to_string(i) + "].ambient";
-            std::string uniformDiffuseName =
-                "pointLights[" + std::to_string(i) + "].diffuse";
-            std::string uniformSpecularName =
-                "pointLights[" + std::to_string(i) + "].specular";
-            std::string uniformConstantName =
-                "pointLights[" + std::to_string(i) + "].constant";
-            std::string uniformLinearName =
-                "pointLights[" + std::to_string(i) + "].linear";
-            std::string uniformQuadraticName =
-                "pointLights[" + std::to_string(i) + "].quadratic";
-
-            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformPositionName.c_str()), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
-            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformAmbientName.c_str()), lightProps.ambient.x, lightProps.ambient.y, lightProps.ambient.z);
-            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformDiffuseName.c_str()), lightProps.diffuse.x, lightProps.diffuse.y, lightProps.diffuse.z);
-            glUniform3f(glGetUniformLocation(shaderProgram.ID, uniformSpecularName.c_str()), lightProps.specular.x, lightProps.specular.y, lightProps.specular.z);
-            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformConstantName.c_str()), 1.0f);
-            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformLinearName.c_str()), 0.09f);
-            glUniform1f(glGetUniformLocation(shaderProgram.ID, uniformQuadraticName.c_str()), 0.032f);
-        }
+        shaderProgram.setPointLightUniforms();
 
         //spot light
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.constant"), 1.0f);
-        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.linear"), 0.09f);
-        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.quadratic"), 0.032f);
-        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-        glUniform1f(glGetUniformLocation(shaderProgram.ID, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+        shaderProgram.setSpotlightUniforms(camera);
 
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 
@@ -526,10 +484,7 @@ int main() {
 
 		lightShader.Activate();
 
-        glUniform3f(glGetUniformLocation(lightShader.ID, "material.ambient"), 1.0f, 0.5f, 0.31f);
-        glUniform3f(glGetUniformLocation(lightShader.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f);
-        glUniform3f(glGetUniformLocation(lightShader.ID, "material.specular"), 0.5f, 0.5f, 0.5f);
-        glUniform1f(glGetUniformLocation(lightShader.ID, "material.shininess"), 32.0f);
+        lightShader.setMaterialUniforms();
 
         projectionLoc = glGetUniformLocation(lightShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));

@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox\includes;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox\includes;C:\Users\Sidav\source\repos\OpenGLSandbox;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Sidav\source\repos\OpenGLSandbox\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox\includes;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox\includes;C:\Users\Sidav\source\repos\OpenGLSandbox;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Sidav\source\repos\OpenGLSandbox\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>-mwindows %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Sidav\source\repos\OpenGLSandbox\imgui;C:\Users\Sidav\source\repos\OpenGLSandbox;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,8 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Videos\Desktop\glad.c" />
-    <ClCompile Include="globals.cpp" />
-    <ClCompile Include="gui.cpp" />
+    <ClCompile Include="src\Gui.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -150,12 +149,10 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="ebo.cpp" />
-    <ClCompile Include="texture.cpp" />
-    <ClCompile Include="vbo.cpp" />
-    <ClCompile Include="vao.cpp" />
-    <ClCompile Include="shaderClass.cpp" />
+    <ClCompile Include="includes\stb\stb_image.cpp" />
+    <ClCompile Include="src\Globals.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,9 +162,7 @@
     <None Include="models\reiplush3.blend" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="globals.h" />
-    <ClInclude Include="gui.h" />
+    <ClInclude Include="includes\Gui.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />
@@ -177,13 +172,13 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="stb_image.h" />
-    <ClInclude Include="ebo.h" />
-    <ClInclude Include="includes.h" />
-    <ClInclude Include="texture.h" />
-    <ClInclude Include="vbo.h" />
-    <ClInclude Include="vao.h" />
-    <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="includes\Buffers.h" />
+    <ClInclude Include="includes\Camera.h" />
+    <ClInclude Include="includes\Globals.h" />
+    <ClInclude Include="includes\Includes.h" />
+    <ClInclude Include="includes\Shader.h" />
+    <ClInclude Include="includes\stb\stb_image.h" />
+    <ClInclude Include="includes\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="glsl\blendingFragment.txt" />
