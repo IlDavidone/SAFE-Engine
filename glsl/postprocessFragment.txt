@@ -21,11 +21,11 @@ void main()
         vec2( offset, -offset)  // bottom-right    
     );
 
-   /*float kernel[9] = float[]( //sharpen 
+   float kernel[9] = float[]( //sharpen 
         -1, -1, -1,
-        -1,  8, -1,
+        -1,  9, -1,
         -1, -1, -1
-    );*/
+    );
 
     /* float kernel[9] = float[]( //blur
     1.0 / 16, 2.0 / 16, 1.0 / 16,
@@ -39,11 +39,11 @@ void main()
         1, 1, 1
     ); */
 
-    float kernel[9] = float[]( //identity 
+    /*float kernel[9] = float[]( //identity 
         0, 0, 0,
         0, 1, 0,
         0, 0, 0
-    );
+    );*/
     
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)

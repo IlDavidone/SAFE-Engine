@@ -28,8 +28,10 @@
 #include "Shader.h"
 #include "Buffers.h"
 #include "Texture.h"
-#include "stb/stb_image.h"
+#include "Player.h"
 #include "Globals.h"
+#include "Renderer.h"
+#include "stb/stb_image.h"
 #include "gui.h"
 
 #endif

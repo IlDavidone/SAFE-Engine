@@ -151,6 +151,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="includes\stb\stb_image.cpp" />
     <ClCompile Include="src\Globals.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -159,6 +160,7 @@
     <None Include="glsl\vertices.txt">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="models\armsfinal.fbx" />
     <None Include="models\reiplush3.blend" />
   </ItemGroup>
   <ItemGroup>
@@ -176,11 +178,14 @@
     <ClInclude Include="includes\Camera.h" />
     <ClInclude Include="includes\Globals.h" />
     <ClInclude Include="includes\Includes.h" />
+    <ClInclude Include="includes\Player.h" />
+    <ClInclude Include="includes\Renderer.h" />
     <ClInclude Include="includes\Shader.h" />
     <ClInclude Include="includes\stb\stb_image.h" />
     <ClInclude Include="includes\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="glsl\armsFragment.txt" />
     <Text Include="glsl\blendingFragment.txt" />
     <Text Include="glsl\fragments.txt" />
     <Text Include="glsl\instancedFragment.txt" />
