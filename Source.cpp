@@ -102,12 +102,15 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Renderer renderer;
 float lastX = pixel::width / 2.0f;
 float lastY = pixel::height / 2.0f;
 bool firstMouse = true;
 
 int main() {
     stbi_set_flip_vertically_on_load(true);
+
+	Player player(camera, camera.Position);
     
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -153,6 +156,7 @@ int main() {
     glViewport(0, 0, pixel::width, pixel::height);
 
     Shader shaderProgram("glsl/vertices.txt", "glsl/fragments.txt");
+    Shader armsProgram("glsl/vertices.txt", "glsl/armsFragment.txt");
 	Shader blendShader("glsl/vertices.txt", "glsl/blendingFragment.txt");
 	Shader lightShader("glsl/vertices.txt", "glsl/lightFragment.txt");
 	Shader screenShader("glsl/postprocessVertex.txt", "glsl/postprocessFragment.txt");
@@ -169,9 +173,9 @@ int main() {
     unsigned int textureColorbuffer;
     glGenTextures(1, &textureColorbuffer);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pixel::width, pixel::height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 400, 200, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
 
     unsigned int rbo;
@@ -239,6 +243,7 @@ int main() {
     Model rei("models/sketchfab.fbx");
     Model rock("models/objects/rock/rock.obj");
     Model planet("models/objects/planet/planet.obj");
+    Model arms("models/armsfinal.fbx");
 
     unsigned int amount = 100000;
     glm::mat4* modelMatrices = new glm::mat4[amount];
@@ -356,6 +361,7 @@ int main() {
         showGui(texture.ID);
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glViewport(0, 0, 400, 200);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
@@ -431,6 +437,8 @@ int main() {
         else
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rock.Draw(shaderProgram);
+
+        renderer.DrawPlayer(player, arms, armsProgram, projection, view);
 
         asteroidShader.Activate();
         projectionLoc = glGetUniformLocation(asteroidShader.ID, "projection");
@@ -564,7 +572,11 @@ int main() {
         }
         framePerSeconds = 1000 / deltaTime;
 
+        uint16_t height, width;
+		glfwGetWindowSize(window, (int*)&width, (int*)&height);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default
+        glViewport(0, 0, width, height);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 

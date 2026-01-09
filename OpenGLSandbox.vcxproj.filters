@@ -57,10 +57,14 @@
     <ClCompile Include="includes\stb\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="glsl\vertices.txt" />
     <None Include="models\reiplush3.blend" />
+    <None Include="models\armsfinal.fbx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imstb_truetype.h">
@@ -114,6 +118,12 @@
     <ClInclude Include="includes\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="glsl\fragments.txt" />
@@ -125,6 +135,7 @@
     <Text Include="glsl\skyboxFragment.txt" />
     <Text Include="glsl\instancedVertex.txt" />
     <Text Include="glsl\instancedFragment.txt" />
+    <Text Include="glsl\armsFragment.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\Image.png">
