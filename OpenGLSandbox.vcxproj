@@ -160,6 +160,7 @@
     <None Include="glsl\vertices.txt">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="models\a2da79bf30c64b0799b228c7e494fb0c.blend" />
     <None Include="models\armsfinal.fbx" />
     <None Include="models\reiplush3.blend" />
   </ItemGroup>
@@ -197,6 +198,42 @@
     <Text Include="glsl\skyboxVertex.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="models\int\Camera_ALB.png" />
+    <Image Include="models\int\Camera_Metallic.png" />
+    <Image Include="models\int\Camera_NORM.png" />
+    <Image Include="models\int\Camera_Roughness.png" />
+    <Image Include="models\int\Chair_ALB.png" />
+    <Image Include="models\int\Chair_Metallic.png" />
+    <Image Include="models\int\Chair_NORM.png" />
+    <Image Include="models\int\Chair_Roughness.png" />
+    <Image Include="models\int\Door_ALB.png" />
+    <Image Include="models\int\Door_NORM.png" />
+    <Image Include="models\int\Door_Roughness.png" />
+    <Image Include="models\int\Handcuffs_ALB.png" />
+    <Image Include="models\int\Handcuffs_NORM.png" />
+    <Image Include="models\int\Handcuffs_Roughness.png" />
+    <Image Include="models\int\Lamp_ALB.png" />
+    <Image Include="models\int\Lamp_EM.png" />
+    <Image Include="models\int\Lamp_Metallic.png" />
+    <Image Include="models\int\Lamp_NORM.png" />
+    <Image Include="models\int\Lamp_Roughness.png" />
+    <Image Include="models\int\Papers_ALB.png" />
+    <Image Include="models\int\Switch_ALB.png" />
+    <Image Include="models\int\Switch_Roughness.png" />
+    <Image Include="models\int\Table_ALB.png" />
+    <Image Include="models\int\Table_Metallic.png" />
+    <Image Include="models\int\Table_NORM.png" />
+    <Image Include="models\int\Table_Roughness.png" />
+    <Image Include="models\int\Walls_ALB.png" />
+    <Image Include="models\int\Walls_NORM.png" />
+    <Image Include="models\int\Walls_Roughness.png" />
+    <Image Include="models\int\Watch_ALB.png" />
+    <Image Include="models\int\Watch_NORM.png" />
+    <Image Include="models\int\Watch_Roughness.png" />
+    <Image Include="models\int\Window_ALB.png" />
+    <Image Include="models\int\Window_Metallic.png" />
+    <Image Include="models\int\Window_NORM.png" />
+    <Image Include="models\int\Window_Roughness.png" />
     <Image Include="textures\cube.png" />
     <Image Include="textures\cuber.jpg" />
     <Image Include="textures\Image.png" />

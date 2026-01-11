@@ -110,7 +110,7 @@ bool firstMouse = true;
 int main() {
     stbi_set_flip_vertically_on_load(true);
 
-	Player player(camera, camera.Position);
+	Player player(camera, camera.Position, 100.0f);
     
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -212,9 +212,9 @@ int main() {
     planeVAO.Bind();
     VBO planeVBO(planeVertices, planeVerticesSize);
     EBO planeEBO(planeIndices, sizeof(planeIndices));
-    planeVAO.LinkAttributes(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)0);                  // position
-    planeVAO.LinkAttributes(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat))); // texcoord
-    planeVAO.LinkAttributes(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat))); // normal
+    planeVAO.LinkAttributes(planeVBO, 0, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)0);                  // position
+    planeVAO.LinkAttributes(planeVBO, 1, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat))); // texcoord
+    planeVAO.LinkAttributes(planeVBO, 2, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat))); // normal
     planeVAO.Unbind();
     planeVBO.Unbind();
     planeEBO.Unbind();
@@ -237,13 +237,16 @@ int main() {
 
     shaderProgram.Activate();
 
+	std::cout << "Loading models..." << std::endl;
+
     stbi_set_flip_vertically_on_load(false);
     Model myModel("models/backpack/backpack.obj");
     stbi_set_flip_vertically_on_load(true);
     Model rei("models/sketchfab.fbx");
     Model rock("models/objects/rock/rock.obj");
     Model planet("models/objects/planet/planet.obj");
-    Model arms("models/armsfinal.fbx");
+    Model arms("models/armsfinal.fbx", "models/arms");
+    Model test("models/examination_room-slient_hill.glb");
 
     unsigned int amount = 100000;
     glm::mat4* modelMatrices = new glm::mat4[amount];
@@ -351,6 +354,18 @@ int main() {
 
         processInput(window);
 
+        glm::vec3 camForward = glm::normalize(glm::vec3(camera.Front.x, 0.0f, camera.Front.z));
+        glm::vec3 camRight = glm::normalize(glm::cross(camForward, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+        float playerSpeed = player.getSpeed(); // or read from player if available
+        camera.MovementSpeed = playerSpeed;
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)  player.setPosition(player.getPosition() + camForward * playerSpeed * deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)  player.setPosition(player.getPosition() - camForward * playerSpeed * deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)  player.setPosition(player.getPosition() - camRight * playerSpeed * deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)  player.setPosition(player.getPosition() + camRight * playerSpeed * deltaTime);
+
+		std::cout << "Player Position: (" << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << ")\n";
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -359,6 +374,7 @@ int main() {
             ImGui::ShowDemoWindow(&showDemoWindow);
 
         showGui(texture.ID);
+		playerParametersGui(player);
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glViewport(0, 0, 400, 200);
@@ -428,6 +444,13 @@ int main() {
         else
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rei.Draw(shaderProgram);
+
+        model = glm::translate(model, glm::vec3(-10.0f, -5.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
+        test.Draw(shaderProgram);
 
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));

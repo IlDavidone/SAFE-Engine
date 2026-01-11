@@ -61,7 +61,7 @@ uniform SpotLight spotLight;
 uniform Material material;
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewPos);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
@@ -71,10 +71,10 @@ void main()
 
     vec3 result;
 
-    //result = CalcDirectionalLight(dirLight, norm, viewDir);
+    result = CalcDirectionalLight(dirLight, norm, viewDir);
 
     for (int i = 0; i < nrPointLights; i++)
-        result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
+        result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewPos);
 
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
 
@@ -105,13 +105,14 @@ vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     return ambient + diffuse + specular;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewPos)
 {
     vec3 lightDir = normalize(light.position - fragPos);
+    vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     float diff = max(dot(normal, lightDir), 0.0);
 
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 /

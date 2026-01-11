@@ -65,6 +65,7 @@
     <None Include="glsl\vertices.txt" />
     <None Include="models\reiplush3.blend" />
     <None Include="models\armsfinal.fbx" />
+    <None Include="models\a2da79bf30c64b0799b228c7e494fb0c.blend" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imstb_truetype.h">
@@ -154,6 +155,114 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\cuber.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Camera_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Camera_Metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Camera_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Camera_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Chair_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Chair_Metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Chair_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Chair_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Door_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Door_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Door_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Handcuffs_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Handcuffs_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Handcuffs_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Lamp_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Lamp_EM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Lamp_Metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Lamp_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Lamp_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Papers_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Switch_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Switch_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Table_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Table_Metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Table_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Table_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Walls_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Walls_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Walls_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Watch_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Watch_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Watch_Roughness.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Window_ALB.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Window_Metallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Window_NORM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\int\Window_Roughness.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

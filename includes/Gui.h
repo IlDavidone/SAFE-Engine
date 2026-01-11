@@ -5,6 +5,8 @@
 
 void showGui(unsigned int textureID);
 
+void playerParametersGui(Player& player);
+
 void exitProgramPopup();
 
 #endif

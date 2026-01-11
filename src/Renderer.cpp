@@ -15,9 +15,12 @@ void Renderer::DrawPlayer(const Player& player, Model& playerModel, Shader& shad
     const Camera& camera = player.getCamera();
 
     glUniform1f(glGetUniformLocation(shader.ID, "time"), glfwGetTime());
+    glUniform1f(glGetUniformLocation(shader.ID, "health"), player.getHealth());
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(glGetUniformLocation(shader.ID, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+    glUniform1i(glGetUniformLocation(shader.ID, "material.diffuse"), 0);
+    glUniform3f(glGetUniformLocation(shader.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
 
     //specific for floating arms model
     model = glm::mat4(1.0f);

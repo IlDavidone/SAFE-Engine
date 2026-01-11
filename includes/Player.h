@@ -5,10 +5,11 @@
 class Player {
 	glm::vec3 m_position;
 	Camera& m_playerCamera;
-	uint8_t m_speed;
+	float m_health;
+	float m_speed;
 
 	public:
-		Player(Camera& camera, glm::vec3& cameraPosition) : m_playerCamera(camera), m_position(cameraPosition), m_speed(2) {}
+		Player(Camera& camera, glm::vec3& cameraPosition, float health) : m_playerCamera(camera), m_position(cameraPosition), m_health(health), m_speed(2.0f) {}
 		~Player() = default;
 
 		Player(const Player&) = default;
@@ -25,10 +26,17 @@ class Player {
 			m_position = position;
 		}
 
-		uint8_t getSpeed() const {
+		float getHealth() const {
+			return m_health;
+		}
+		void setHealth(float health) {
+			m_health = health;
+		}
+
+		float getSpeed() const {
 			return m_speed;
 		}
-		void setSpeed(uint8_t speed) {
+		void setSpeed(float speed) {
 			m_speed = speed;
 		}
 };

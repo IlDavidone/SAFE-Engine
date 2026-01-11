@@ -73,9 +73,9 @@ private:
 class Model
 {
 public:
-	Model(const char* path)
+	Model(const char* path, const char* texturePath = nullptr)
 	{
-		loadModel(path);
+		loadModel(path, texturePath);
 	}
 	void Draw(Shader& shader);
 	std::vector<Mesh> meshes;
@@ -84,11 +84,13 @@ private:
 	// model data
 	std::string directory;
 
-	void loadModel(std::string const& path);
-	void processNode(aiNode* node, const aiScene* scene);
+	void loadModel(std::string const& path, const char* texturePath);
+	void processNode(aiNode* node, const aiScene* scene, const char* texturePath);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene, const char* texturePath);
 	std::vector<Textures> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
-		std::string typeName);
+	std::string typeName);
+	std::vector<Textures> loadMaterialTextures(aiMaterial * mat, aiTextureType type,
+	std::string typeName, const aiScene * scene);
 };
 
 extern unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma);
