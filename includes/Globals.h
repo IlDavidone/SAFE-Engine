@@ -125,4 +125,7 @@ extern struct lightProperties {
 
 extern lightProperties lightProps;
 
+extern const float gravityAcceleration;
+extern float yPosVelocity;
+
 #endif

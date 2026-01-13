@@ -82,6 +82,8 @@ void playerParametersGui(Player& player) {
 	ImGui::SliderFloat("Speed", &speedValue, 0.0f, 30.0f);
 	ImGui::Text("Current Health: %.1f", player.getHealth());
 
+	ImGui::Text("Player Camera Position: %.1f, %.1f, %.1f", player.getCamera().Position.x, player.getCamera().Position.y, player.getCamera().Position.z);
+	ImGui::Text("Camera Front Vector: %.1f, %.1f, %.1f", player.getCamera().Front.x, player.getCamera().Front.y, player.getCamera().Front.z);
 	ImGui::Text("Player Position: %.1f, %.1f, %.1f", player.getPosition().x, player.getPosition().y, player.getPosition().z);
 	player.setHealth(healthValue);
 	player.setSpeed(speedValue);

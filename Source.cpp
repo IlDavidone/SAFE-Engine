@@ -101,7 +101,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.6f, 3.0f));
 Renderer renderer;
 float lastX = pixel::width / 2.0f;
 float lastY = pixel::height / 2.0f;
@@ -357,12 +357,18 @@ int main() {
         glm::vec3 camForward = glm::normalize(glm::vec3(camera.Front.x, 0.0f, camera.Front.z));
         glm::vec3 camRight = glm::normalize(glm::cross(camForward, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-        float playerSpeed = player.getSpeed(); // or read from player if available
+        float playerSpeed = player.getSpeed();
         camera.MovementSpeed = playerSpeed;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)  player.setPosition(player.getPosition() + camForward * playerSpeed * deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)  player.setPosition(player.getPosition() - camForward * playerSpeed * deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)  player.setPosition(player.getPosition() - camRight * playerSpeed * deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)  player.setPosition(player.getPosition() + camRight * playerSpeed * deltaTime);
+        static bool spaceWasDown = false;
+        bool spaceDown = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+
+        if (spaceDown && !spaceWasDown && player.getPosition().y <= 0.6f) {
+            yPosVelocity = 4;
+        }
 
 		std::cout << "Player Position: (" << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << ")\n";
 
@@ -461,6 +467,30 @@ int main() {
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rock.Draw(shaderProgram);
 
+        yPosVelocity -= gravityAcceleration * deltaTime;
+
+        player.setPosition(
+            player.getPosition().x,
+            player.getPosition().y + yPosVelocity * deltaTime,
+            player.getPosition().z
+        );
+
+        if (player.getPosition().y <= 0.6f) {
+            player.setPosition(
+                player.getPosition().x,
+                0.6f,
+                player.getPosition().z
+            );
+            yPosVelocity = 0.0f;
+        }
+
+        glm::vec3 targetCamPos = player.getPosition();
+        camera.Position = glm::mix(
+            camera.Position,
+            targetCamPos,
+            12.0f * deltaTime
+        );
+
         renderer.DrawPlayer(player, arms, armsProgram, projection, view);
 
         asteroidShader.Activate();
@@ -504,8 +534,8 @@ int main() {
             0
         );
         model = glm::mat4(1.0f);              
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(4.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(128.0f, 0.0f, 128.0f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "uvScale"), 4.0f);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -720,6 +750,7 @@ void processInput(GLFWwindow* window)
     }
 
     tabWasDown = tabDown;
+
 }
 
 static bool mousePressedLastFrame = false;

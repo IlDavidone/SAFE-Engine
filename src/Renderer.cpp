@@ -26,7 +26,7 @@ void Renderer::DrawPlayer(const Player& player, Model& playerModel, Shader& shad
     model = glm::mat4(1.0f);
     model = glm::translate(model, camera.Position);
     model *= glm::inverse(glm::mat4(glm::mat3(view)));
-    model = glm::translate(model, glm::vec3(0.0f, -0.3f, -0.5f));
+    model = glm::translate(model, glm::vec3(0.0f, -0.3f, -0.2f));
     model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, sin(glfwGetTime() * 2.6f) / 46));

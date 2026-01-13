@@ -22,6 +22,11 @@ class Player {
 		const glm::vec3& getPosition() {
 			return m_position;
 		}
+		void setPosition(float x, float y, float z) {
+			m_position.x = x;
+			m_position.y = y;
+			m_position.z = z;
+		}
 		void setPosition(glm::vec3 position) {
 			m_position = position;
 		}

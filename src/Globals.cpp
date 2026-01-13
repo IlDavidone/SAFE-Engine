@@ -529,3 +529,6 @@ lightProperties lightProps = {
     glm::vec3(0.5f, 0.5f, 0.5f),
     32.0f
 };
+
+const float gravityAcceleration = 9.8f;
+float yPosVelocity = 0;
