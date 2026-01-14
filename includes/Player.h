@@ -2,6 +2,9 @@
 
 #include "Includes.h"
 
+extern const float playerRadius;
+extern const float playerHeight;
+
 class Player {
 	glm::vec3 m_position;
 	Camera& m_playerCamera;
@@ -15,33 +18,21 @@ class Player {
 		Player(const Player&) = default;
 		Player& operator=(const Player&) = delete;
 
-		const Camera& getCamera() const {
-			return m_playerCamera;
-		}
+		const Camera& getCamera() const;
 
-		const glm::vec3& getPosition() {
-			return m_position;
-		}
-		void setPosition(float x, float y, float z) {
-			m_position.x = x;
-			m_position.y = y;
-			m_position.z = z;
-		}
-		void setPosition(glm::vec3 position) {
-			m_position = position;
-		}
+		const glm::vec3& getPosition();
 
-		float getHealth() const {
-			return m_health;
-		}
-		void setHealth(float health) {
-			m_health = health;
-		}
+		void setPosition(float x, float y, float z);
 
-		float getSpeed() const {
-			return m_speed;
-		}
-		void setSpeed(float speed) {
-			m_speed = speed;
-		}
+		void setPosition(glm::vec3 position);
+
+		float getHealth() const;
+
+		void setHealth(float health);
+
+		float getSpeed() const;
+
+		void setSpeed(float speed);
 };
+
+void updatePlayerPhysics(Player& player, float& yPosVelocity, float deltaTime);

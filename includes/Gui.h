@@ -3,6 +3,8 @@
 
 #include "Includes.h"
 
+class Player;
+
 void showGui(unsigned int textureID);
 
 void playerParametersGui(Player& player);

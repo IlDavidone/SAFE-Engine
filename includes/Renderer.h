@@ -3,6 +3,7 @@
 #include "Includes.h"
 
 class Model;
+class Player;
 
 class Renderer {
 public: 

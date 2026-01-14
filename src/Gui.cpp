@@ -9,9 +9,6 @@ void cubePropertyGui(int selectedID);
 bool lightGuiOpen = true;
 glm::vec3 cubePosition;
 
-float healthValue = 100.0f;
-float speedValue = 2.0f;
-
 void showGui(unsigned int textureID) {
 	ImGui::Begin("Parameters", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
 
@@ -73,13 +70,22 @@ void showGui(unsigned int textureID) {
 	ImGui::End();
 }
 
+float healthValue = 100.0f;
+float speedValue = 2.0f;
+float playerPosX = 0.0f;
+float playerPosY = 0.0f;
+float playerPosZ = 0.0f;
+
 void playerParametersGui(Player& player) {
 	ImGui::Begin("Player Parameters", NULL, ImGuiWindowFlags_NoCollapse);
 
 	speedValue = player.getSpeed();
+	healthValue = player.getHealth();
+	glm::vec3 playerPos = player.getPosition();
 	
 	ImGui::SliderFloat("Health", &healthValue, 0.0f, 100.0f);
 	ImGui::SliderFloat("Speed", &speedValue, 0.0f, 30.0f);
+	ImGui::SliderFloat3("Position", (float*)&playerPos, -50.0f, 50.0f);
 	ImGui::Text("Current Health: %.1f", player.getHealth());
 
 	ImGui::Text("Player Camera Position: %.1f, %.1f, %.1f", player.getCamera().Position.x, player.getCamera().Position.y, player.getCamera().Position.z);
@@ -87,6 +93,7 @@ void playerParametersGui(Player& player) {
 	ImGui::Text("Player Position: %.1f, %.1f, %.1f", player.getPosition().x, player.getPosition().y, player.getPosition().z);
 	player.setHealth(healthValue);
 	player.setSpeed(speedValue);
+	player.setPosition(playerPos);
 
 	ImGui::End();
 }

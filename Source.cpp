@@ -101,7 +101,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-Camera camera(glm::vec3(0.0f, 0.6f, 3.0f));
+Camera playerCamera(glm::vec3(0.0f, 0.6f, 3.0f));
 Renderer renderer;
 float lastX = pixel::width / 2.0f;
 float lastY = pixel::height / 2.0f;
@@ -110,7 +110,7 @@ bool firstMouse = true;
 int main() {
     stbi_set_flip_vertically_on_load(true);
 
-	Player player(camera, camera.Position, 100.0f);
+	Player player(playerCamera, playerCamera.Position, 100.0f);
     
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -341,12 +341,12 @@ int main() {
         std::map<float, glm::vec3> sorted;
         for (unsigned int i = 0; i < windows.size(); i++)
         {
-            float distance = glm::length(camera.Position - windows[i]);
+            float distance = glm::length(playerCamera.Position - windows[i]);
             sorted[distance] = windows[i];
         }
 
         glm::mat4 projection = glm::perspective(
-            glm::radians(camera.Zoom),
+            glm::radians(playerCamera.Zoom),
             (float)pixel::width / (float)pixel::height,
             0.1f,
             500.0f
@@ -354,11 +354,11 @@ int main() {
 
         processInput(window);
 
-        glm::vec3 camForward = glm::normalize(glm::vec3(camera.Front.x, 0.0f, camera.Front.z));
+        glm::vec3 camForward = glm::normalize(glm::vec3(playerCamera.Front.x, 0.0f, playerCamera.Front.z));
         glm::vec3 camRight = glm::normalize(glm::cross(camForward, glm::vec3(0.0f, 1.0f, 0.0f)));
 
         float playerSpeed = player.getSpeed();
-        camera.MovementSpeed = playerSpeed;
+        playerCamera.MovementSpeed = playerSpeed;
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)  player.setPosition(player.getPosition() + camForward * playerSpeed * deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)  player.setPosition(player.getPosition() - camForward * playerSpeed * deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)  player.setPosition(player.getPosition() - camRight * playerSpeed * deltaTime);
@@ -367,10 +367,8 @@ int main() {
         bool spaceDown = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
         if (spaceDown && !spaceWasDown && player.getPosition().y <= 0.6f) {
-            yPosVelocity = 4;
+            yPosVelocity = 4.5f;
         }
-
-		std::cout << "Player Position: (" << player.getPosition().x << ", " << player.getPosition().y << ", " << player.getPosition().z << ")\n";
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -419,15 +417,15 @@ int main() {
         shaderProgram.setPointLightUniforms();
 
         //spot light
-        shaderProgram.setSpotlightUniforms(camera);
+        shaderProgram.setSpotlightUniforms(playerCamera);
 
-        glUniform3f(glGetUniformLocation(shaderProgram.ID, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "viewPos"), playerCamera.Position.x, playerCamera.Position.y, playerCamera.Position.z);
 
 
         int projectionLoc = glGetUniformLocation(shaderProgram.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 view = playerCamera.GetViewMatrix();
         int viewLoc = glGetUniformLocation(shaderProgram.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -467,26 +465,11 @@ int main() {
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rock.Draw(shaderProgram);
 
-        yPosVelocity -= gravityAcceleration * deltaTime;
-
-        player.setPosition(
-            player.getPosition().x,
-            player.getPosition().y + yPosVelocity * deltaTime,
-            player.getPosition().z
-        );
-
-        if (player.getPosition().y <= 0.6f) {
-            player.setPosition(
-                player.getPosition().x,
-                0.6f,
-                player.getPosition().z
-            );
-            yPosVelocity = 0.0f;
-        }
+		updatePlayerPhysics(player, yPosVelocity, deltaTime);
 
         glm::vec3 targetCamPos = player.getPosition();
-        camera.Position = glm::mix(
-            camera.Position,
+        playerCamera.Position = glm::mix(
+            playerCamera.Position,
             targetCamPos,
             12.0f * deltaTime
         );
@@ -497,7 +480,7 @@ int main() {
         projectionLoc = glGetUniformLocation(asteroidShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        view = camera.GetViewMatrix();
+        view = playerCamera.GetViewMatrix();
         viewLoc = glGetUniformLocation(asteroidShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         
@@ -550,7 +533,7 @@ int main() {
         projectionLoc = glGetUniformLocation(lightShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        view = camera.GetViewMatrix();
+        view = playerCamera.GetViewMatrix();
         viewLoc = glGetUniformLocation(lightShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -569,7 +552,7 @@ int main() {
 
 		lightVAO.Unbind();
 
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+        view = glm::mat4(glm::mat3(playerCamera.GetViewMatrix()));
         glm::mat4 skyboxView = glm::mat4(glm::mat3(view));
 
         glDepthMask(GL_FALSE);
@@ -605,7 +588,7 @@ int main() {
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-        view = camera.GetViewMatrix();
+        view = playerCamera.GetViewMatrix();
         viewLoc = glGetUniformLocation(blendShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -705,13 +688,13 @@ uint8_t mouseCounter{0};
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        playerCamera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        playerCamera.ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        playerCamera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        playerCamera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         if (wireframeCounter == 0) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -772,14 +755,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
         glfwGetCursorPos(window, &mx, &my);
 
         glm::mat4 projection = glm::perspective(
-            glm::radians(camera.Zoom),
+            glm::radians(playerCamera.Zoom),
             (float)pixel::width / pixel::height,
             0.1f,
             500.0f
         );
 
-        glm::vec3 rayDir = GetMouseRay(mx, my, projection, camera.GetViewMatrix());
-        glm::vec3 rayOrigin = camera.Position;
+        glm::vec3 rayDir = GetMouseRay(mx, my, projection, playerCamera.GetViewMatrix());
+        glm::vec3 rayOrigin = playerCamera.Position;
 
         float closest = FLT_MAX;
         selectedID = -1;
@@ -823,7 +806,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
     std::cout << lastX << " " << lastY << std::endl;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    playerCamera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -831,5 +814,5 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    playerCamera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
