@@ -1,5 +1,7 @@
 #include "Includes.h"
 
+struct AABB;
+
 struct Selectable {
     glm::vec3 position;
     float radius;
@@ -95,6 +97,8 @@ float skyboxVertices[] = {
     -1.0f, -1.0f,  1.0f,
      1.0f, -1.0f,  1.0f
 };
+
+std::vector<AABB> WorldAABBs;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -354,21 +358,14 @@ int main() {
 
         processInput(window);
 
-        glm::vec3 camForward = glm::normalize(glm::vec3(playerCamera.Front.x, 0.0f, playerCamera.Front.z));
-        glm::vec3 camRight = glm::normalize(glm::cross(camForward, glm::vec3(0.0f, 1.0f, 0.0f)));
-
-        float playerSpeed = player.getSpeed();
-        playerCamera.MovementSpeed = playerSpeed;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)  player.setPosition(player.getPosition() + camForward * playerSpeed * deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)  player.setPosition(player.getPosition() - camForward * playerSpeed * deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)  player.setPosition(player.getPosition() - camRight * playerSpeed * deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)  player.setPosition(player.getPosition() + camRight * playerSpeed * deltaTime);
         static bool spaceWasDown = false;
         bool spaceDown = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
         if (spaceDown && !spaceWasDown && player.getPosition().y <= 0.6f) {
             yPosVelocity = 4.5f;
         }
+
+		bool shiftDown = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -449,9 +446,9 @@ int main() {
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rei.Draw(shaderProgram);
 
-        model = glm::translate(model, glm::vec3(-10.0f, -5.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(-10.0f, -0.99f, 0.0f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.02f, 0.02f, 0.02f));
+		model = glm::scale(model, glm::vec3(0.008f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         test.Draw(shaderProgram);
@@ -465,7 +462,20 @@ int main() {
             glUniform3f(glGetUniformLocation(shaderProgram.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
         rock.Draw(shaderProgram);
 
-		updatePlayerPhysics(player, yPosVelocity, deltaTime);
+        //player code
+        float playerSpeed = player.getSpeed();
+        playerCamera.MovementSpeed = playerSpeed;
+
+        glm::mat4 playerView = glm::mat4(1.0f);
+
+        if (shiftDown) {
+            player.setSpeed(6.0f);
+        }
+        else {
+            player.setSpeed(2.5f);
+		}
+
+		updatePlayerPhysics(player, yPosVelocity, deltaTime, WorldAABBs);
 
         glm::vec3 targetCamPos = player.getPosition();
         playerCamera.Position = glm::mix(
@@ -474,7 +484,8 @@ int main() {
             12.0f * deltaTime
         );
 
-        renderer.DrawPlayer(player, arms, armsProgram, projection, view);
+        renderer.DrawPlayer(player, arms, armsProgram, projection, playerView);
+        //end of player code
 
         asteroidShader.Activate();
         projectionLoc = glGetUniformLocation(asteroidShader.ID, "projection");
@@ -505,6 +516,11 @@ int main() {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseTexture.ID);
         for (int i{ 0 }; i < cubePositions->size(); i++) {
+			glm::vec3 cubePosition = (*cubePositions)[i].position;
+            WorldAABBs.push_back(AABB{
+                cubePosition - glm::vec3(0.5f),
+                cubePosition + glm::vec3(0.5f)
+                });
             (*cubePositions)[i].draw(shaderProgram, VAO1);
         }
 
@@ -803,8 +819,6 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
     lastX = xpos;
     lastY = ypos;
-
-    std::cout << lastX << " " << lastY << std::endl;
 
     playerCamera.ProcessMouseMovement(xoffset, yoffset);
 }

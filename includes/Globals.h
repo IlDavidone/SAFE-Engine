@@ -3,6 +3,8 @@
 
 #include "Includes.h"
 
+struct AABB;
+
 namespace pixel {
 	constexpr uint16_t width{ 1536 };
 	constexpr uint16_t height{ 864 };
@@ -127,5 +129,9 @@ extern lightProperties lightProps;
 
 extern const float gravityAcceleration;
 extern float yPosVelocity;
+extern float xVelocity;
+extern float zVelocity;
+
+extern std::vector<AABB> WorldAABBs;
 
 #endif

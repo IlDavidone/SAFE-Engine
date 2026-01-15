@@ -532,3 +532,6 @@ lightProperties lightProps = {
 
 const float gravityAcceleration = 9.8f;
 float yPosVelocity = 0;
+float xVelocity = 0;
+float zVelocity = 0;
+

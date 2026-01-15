@@ -2,6 +2,8 @@
 
 #include "Includes.h"
 
+struct AABB;
+
 extern const float playerRadius;
 extern const float playerHeight;
 
@@ -35,4 +37,4 @@ class Player {
 		void setSpeed(float speed);
 };
 
-void updatePlayerPhysics(Player& player, float& yPosVelocity, float deltaTime);
+void updatePlayerPhysics(Player& player, float& yPosVelocity, float deltaTime, std::vector<AABB>& worldAABBs);
